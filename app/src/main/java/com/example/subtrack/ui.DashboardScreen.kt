@@ -5,10 +5,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -72,7 +74,11 @@ fun DashboardScreen(
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(subscriptions) { sub ->
-                        SubscriptionItem(sub)
+
+                        SubscriptionItem(
+                            subscription = sub,
+                            onDeleteClick = { viewModel.deleteSubscription(sub) }
+                        )
                     }
                 }
             }
@@ -81,7 +87,10 @@ fun DashboardScreen(
 }
 
 @Composable
-fun SubscriptionItem(subscription: Subscription) {
+fun SubscriptionItem(
+    subscription: Subscription,
+    onDeleteClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -92,16 +101,26 @@ fun SubscriptionItem(subscription: Subscription) {
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(text = subscription.platformAdi, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(text = subscription.kategori, style = MaterialTheme.typography.bodyMedium)
             }
             Text(
                 text = "${subscription.fiyat} ${subscription.paraBirimi}",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(end = 16.dp)
             )
+
+            IconButton(onClick = onDeleteClick) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Sil",
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }
